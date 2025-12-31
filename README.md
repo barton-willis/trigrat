@@ -15,9 +15,13 @@ The experimental function `xtrigrat` is similar to `trigrat`, but it attempts to
 (%i2) trigrat(sin(3*x)/(sin(x + %pi/3)));
 (%o2)                   sqrt(3) sin(2 x) + cos(2 x) - 1
 
+The function `trigrat` expands the expression
 (%i3) trigrat((1+x)^3 + sin(x)^2 + cos(x)^2);
                                3      2
 (%o3)                         x  + 3 x  + 3 x + 2
+
+But the function `xtrigrat` attemps to preserve the structure of the input as much as possible:
+
 (%i4) xtrigrat((1+x)^3 + sin(x)^2 + cos(x)^2);
                                         3
 (%o4)                            (x + 1)  + 1
