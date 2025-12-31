@@ -62,7 +62,7 @@ STEP 'd'
 
 ;; D. Lazard wrote the initial version of `trigrat` in August 1988. Since then, the code has been modified and
 ;; rewritten by many contributors. For the historical record since about 2000, consult the Git history.
-(defmfun $trigrat (e)
+(defmfun $trigrat (e &optional canonical)
  "Simplify a trigonometric expression `e` by exponential substitution, expansion, and 
   rational simplification. This function does *not* return canonical representation--it 
   is possible that trigrat will simplify equivalent expressions to syntactically distinct 
@@ -81,9 +81,10 @@ STEP 'd'
                         ($expand 
                            (let (($algebraic t)) (sratsimp ($exponentialize e))))))))
              ;; conditionally return either e or ans
-             (if (< n (trig-count ans))
+             (if (or canonical (< (trig-count ans) n))
+               ans
                e
-               ans)))))
+               )))))
 
 ;; need to check what the function partition does...maybe this function isn' needed?
 (defun xpartition (e fn)
@@ -94,17 +95,17 @@ STEP 'd'
              (push ek q)))
       (values p q)))
 
-(defmfun $xtrigrat (e)
+(defmfun $xtrigrat (e &optional canonical)
 "Similar to `trigrat`, but attempt to change the structure of the input as little as possible. "
    (cond ((or ($mapatom e) (eql 0 (trig-count e))) e)
          ;; for either a sum or a product, apply `trigrat` only to the terms that involve a
          ;; trig function. This avoids unnecessary expansion: try trigrat((1+x)^2 + sin(x)^2 + cos(x)^2)
          ((mplusp e)
            (multiple-value-bind (p q) (xpartition (cdr e) #'(lambda (q) (eql 0 (trig-count q))))
-             (add (fapply 'mplus p) ($trigrat (fapply 'mplus q)))))
+             (add (fapply 'mplus p) ($trigrat (fapply 'mplus q) canonical))))
           ((mtimesp e)
            (multiple-value-bind (p q) (xpartition (cdr e) #'(lambda (q) (eql 0 (trig-count q))))
-             (add (fapply 'mtimes p) ($trigrat (fapply 'mtimes q)))))
+             (add (fapply 'mtimes p) ($trigrat (fapply 'mtimes q) canonical))))
           ;; Does this need to check for subscripted functions? Yes it does!
           (($subvarp (mop e)) ;subscripted function
 		      (subfunmake 
@@ -112,7 +113,7 @@ STEP 'd'
 			     (mapcar #'$xtrigrat (subfunsubs e)) 
 			     (mapcar #'$xtrigrat (subfunargs e))))
           ;; map xtrigrat over the arguments
-          (t (ftake (caar e) (mapcar #'$xtrigrat (cdr e))))))
+          (t (ftake (caar e) (mapcar #'(lambda (q) ($xtrigrat q canonical)) (cdr e))))))
             
 
               
