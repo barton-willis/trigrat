@@ -1,11 +1,22 @@
 # Trigonometric Rationalization for Maxima
 
-This is a from scratch revision of the Maxima function `trigrat` that D. Lazard wrote in August 1988. Since then, the code has been modified and rewritten by many contributors. This version uses basically the same method as the original, but unlike the original, this code uses a metric based on number of trig operators to optionally return the expression unchanged.
+The Maxima function `trigrat` attempts to simplify expressions that involve trigonometric expressions. Specifically, it converts trigonometric expressions into exponential form, simplifies them algebraically, and returns a simplified expression. 
 
-The function `trigrat` does *not* return canonical representation — it is possible that trigrat will simplify equivalent expressions to syntactically distinct 
-expressions. 
+This is a from‑scratch revision of the Maxima function `trigrat`, originally written by D. Lazard in August 1988. Since then, the code has been modified by many contributors. This version follows essentially the same method as the original, but introduces a new metric based on the number of trigonometric operators that guides the simplification process. Using this metric, the function may return the input expression unchanged when it contains fewer trigonometric operators than the simplified result. 
 
-The experimental function `xtrigrat` is similar to `trigrat`, but it attempts to change the input as little as possible.
+Because of this simplification heuristic, the function `trigrat` does *not* return a canonical representation — thus it is possible that `trigrat` will simplify equivalent expressions to syntactically distinct expressions. I will 
+experiment with giving `trigrat` that turns off the simplification heuristic.
+
+This revision attempts to fix all open reported bugs in `trigrat`:
+
+- [#4554](https://sourceforge.net/p/maxima/bugs/4554/) — `trigrat` often makes expressions unnecessarily complicated  
+- [#2918](https://sourceforge.net/p/maxima/bugs/2918/) — `trigrat` crashes because it pollutes `?varlist`  
+- [#2263](https://sourceforge.net/p/maxima/bugs/2263/) — `trigrat(sin(%pi/5))` produces an incorrect expansion
+
+In fairness to the original author, it is possible that some of these bugs are due to changes to Maxima or to bugs
+introduced to the package after the initial version of `trigrat`. 
+
+The experimental function `xtrigrat` is similar to `trigrat`, but it attempts to change the input as little as possible. For example, `xtrigrat` avoids expanding terms that are free of trigonometric operators, whereas `trigrat` will expand them.
 
 ## Examples
 
@@ -26,3 +37,5 @@ But the function `xtrigrat` attempts to preserve the structure of the input as m
 (%i4) xtrigrat((1+x)^3 + sin(x)^2 + cos(x)^2);
                                         3
 (%o4)                            (x + 1)  + 1
+```
+
