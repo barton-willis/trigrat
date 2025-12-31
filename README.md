@@ -1,8 +1,11 @@
-# `trigrat`: Trigonometric Rationalization for Maxima
+# Trigonometric Rationalization for Maxima
 
-This is a from scratch revision of the Maxima function `trigrat` that  D. Lazard wrote in August 1988. Since then, the code has been modified and rewritten by many contributors. This version uses basically the same method as the orginal, but unlike the orignial, this code uses a metric based on number of trig operators to optionally return the expression unchanged.
+This is a from scratch revision of the Maxima function `trigrat` that D. Lazard wrote in August 1988. Since then, the code has been modified and rewritten by many contributors. This version uses basically the same method as the orginal, but unlike the orignial, this code uses a metric based on number of trig operators to optionally return the expression unchanged.
 
-## Example
+The function `trigrat` does *not* return canonical representation--it is possible that trigrat will simplify equivalent expressions to syntactically distinct 
+expressions. 
+
+## Examples
 
 ```maxima
 (%i1) trigrat(sin(x)^2 + cos(x)^2);
