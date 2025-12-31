@@ -5,7 +5,7 @@ The Maxima function `trigrat` attempts to simplify expressions that involve trig
 This is a from‑scratch revision of the Maxima function `trigrat`, originally written by D. Lazard in August 1988. Since then, the code has been modified by many contributors. This version follows essentially the same method as the original, but introduces a new metric based on the number of trigonometric operators that guides the simplification process. Using this metric, the function may return the input expression unchanged when it contains fewer trigonometric operators than the simplified result. 
 
 Because of this simplification heuristic, the function `trigrat` does *not* return a canonical representation — thus it is possible that `trigrat` will simplify equivalent expressions to syntactically distinct expressions. I will 
-experiment with giving `trigrat` that turns off the simplification heuristic.
+experiment with giving `trigrat` an optional argument that turns off the simplification heuristic.
 
 This revision attempts to fix all open reported bugs in `trigrat`:
 
