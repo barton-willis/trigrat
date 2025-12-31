@@ -18,7 +18,7 @@ introduced to the package after the initial version of `trigrat`.
 
 The experimental function `xtrigrat` is similar to `trigrat`, but it attempts to change the input as little as possible. For example, `xtrigrat` avoids expanding terms that are free of trigonometric operators, whereas `trigrat` will expand them.
 
-## Examples
+### Examples
 
 ```maxima
 (%i1) trigrat(sin(x)^2 + cos(x)^2);
@@ -39,3 +39,16 @@ But the function `xtrigrat` attempts to preserve the structure of the input as m
 (%o4)                            (x + 1)  + 1
 ```
 
+### To‑do
+
+  - Document how to load `trigrat` into Maxima.
+
+  - Write user documentation that clarifies the meaning of the current documention: *"Gives a canonical simplified quasilinear form of a trigonometrical expression."* 
+
+  - Write a regression test for `trigrat`. 
+
+  - Incorporate feedback from Maxima users and developers and improve the code.
+
+  - Make sure that for quotients of trigonometric polynomials, `trigrat` returns
+    a trigonometric polynomial when ever this is possible. 
+  
