@@ -15,7 +15,7 @@ Arguably, the Fourier representation is not a “simplification,” (meaning mak
 - Every two mathematically equivalent trigonometric polynomials have identical Fourier representations.
 - Distinct trigonometric polynomials have distinct Fourier representations.
 
-For a *quotient* of trigonometric polynomials, `trigrat` produces a Fourier representations when ever possible; for
+For a *quotient* of trigonometric polynomials, `trigrat` produces a Fourier representation when possible; for
 example
 ```maxima
 (%i1) trigrat(sin(3*x)/sin(x + %pi/3));
@@ -48,12 +48,8 @@ functions; examples
 ```
 
 ### History
-This is a from‑scratch revision of the Maxima function `trigrat`, originally written by D. Lazard in August 1988. Since then, the code has been modified by many contributors. This version follows essentially the same method as the original, but introduces a new metric based on the number of trigonometric operators that guides the simplification process. Using this metric, the function may return the input expression unchanged when it contains fewer trigonometric operators than the simplified result. 
-
-
-### Motivation
-
-This revision attempts to fix all open reported bugs in `trigrat`:
+This is a from‑scratch revision of the Maxima function `trigrat`, originally written by D. Lazard in August 1988. Since then, the code has been modified by many contributors. This version follows essentially the same method as the original,
+but this version attempts to fix all open reported bugs in `trigrat`. These bugs are:
 
 - [#4554](https://sourceforge.net/p/maxima/bugs/4554/) — `trigrat` often makes expressions unnecessarily complicated  
 - [#2918](https://sourceforge.net/p/maxima/bugs/2918/) — `trigrat` crashes because it pollutes `?varlist`  
@@ -62,6 +58,7 @@ This revision attempts to fix all open reported bugs in `trigrat`:
 In fairness to the original author, it is possible that some of these bugs are due to changes to Maxima or to bugs
 introduced to the package after the initial version of `trigrat`. 
 
+Additionally, this version is, I hope, easier to fix, extend, and maintain. 
 
 ### Experimental function `xtrigrat`
 The experimental function `xtrigrat` is similar to `trigrat`, but it attempts to change the input as little as possible. For example, `xtrigrat` avoids expanding terms that are free of trigonometric operators, whereas `trigrat` will expand them. Some examples:
