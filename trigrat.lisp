@@ -62,7 +62,7 @@ STEP 'd'
 
 ;; D. Lazard wrote the initial version of `trigrat` in August 1988. Since then, the code has been modified and
 ;; rewritten by many contributors. For the historical record since about 2000, consult the Git history.
-(defmfun $trigrat (e &optional (canonical nil))
+(defmfun $trigrat (e &optional (canonical t))
  "Simplify a trigonometric expression `e` by exponential substitution, expansion, and 
   rational simplification. This function does *not* return canonical representation--it 
   is possible that trigrat will simplify equivalent expressions to syntactically distinct 
@@ -86,7 +86,7 @@ STEP 'd'
                e
                )))))
 
-(defmfun $xtrigrat (e &optional (canonical nil))
+(defmfun $xtrigrat (e &optional (canonical t))
 "Similar to `trigrat`, but attempt to change the structure of the input as little as possible. "
    (cond ((or ($mapatom e) (eql 0 (trig-count e))) e)
          ;; for either a sum or a product, apply `trigrat` only to the terms that involve a
