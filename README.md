@@ -101,7 +101,7 @@ The user documentation says:
 *Gives a canonical simplified quasilinear form of a trigonometrical expression. `expr` is a rational fraction of several `sin`, `cos`, or `tan` whose arguments are linear forms in some variables (or kernels) and `%pi/n` (with integer `n`) and
 integer coefficients. The result is a simplified fraction whose numerator and denominator are linear in `sin` and `cos`. Thus `trigrat` linearizes whenever it is possible.*
 
-In this context, I am not sure what “quasilinear” means, but the condition that `trigrat(expr)` “linearizes whenever it is possible” is *not* true; for example, the current `trigrat` and my rewrite both fail miserably for this case:
+In this context, I am not sure what “quasilinear” means, but the condition that `trigrat(expr)` “linearizes whenever it is possible” is *not* true; for example, the current `trigrat` and my rewrite both fail for this case:
 
 ```maxima
 (%i1)	trigrat(sin(5*x)/sin(x+%pi/5));
@@ -110,11 +110,11 @@ In this context, I am not sure what “quasilinear” means, but the condition t
 sin((30*x+2*%pi)/5)+(%i*sin(%pi/5)+cos(%pi/5))*cos((30*x+2*%pi)/5)+(sin(%pi/5)-%i*cos(%pi/5))*sin(4*x)+(-(%i*sin(%pi/5))-cos(%pi/5))*cos(4*x))/(sin((30*x+2*%pi)/5)^2+
 (-(2*%i*cos((30*x+2*%pi)/5))-2*sin(4*x)+2*%i*cos(4*x))*sin((30*x+2*%pi)/5)-cos((30*x+2*%pi)/5)^2+(2*%i*sin(4*x)+2*cos(4*x))*cos((30*x+2*%pi)/5)+sin(4*x)^2-2*%i*cos(4*x)*sin(4*x)-cos(4*x)^2)
 ```
-The result is a quotient of Fourier sums, not a Fourier sum.  Both the current `trigrat` function and this rewrite, achieve the linearization by through rational simplification (`ratsimp`) with the option variable `algebraic` set to true. This works for some cases, but
-not all. 
+The result is a quotient of Fourier sums, not a Fourier sum. 
 
-Here is a step-by-step partial fraction-based method that shows how this expression can be linearized:
+Both the current `trigrat` function and this rewrite, achieve the linearization by through rational simplification (`ratsimp`) with the option variable `algebraic` set to true. This works for some cases, but not all. I propose a replacing the method that depends on the specifics of how rational simplification works with a partial fraction-based method. I think this method will be more predicable and has a better chance of working for more cases.
 
+Here is a step-by-step partial fraction-based method that shows how such a method might work:
 ```maxima
 
 (%i1)	radsubstflag : true$
