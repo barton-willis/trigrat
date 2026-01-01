@@ -110,7 +110,8 @@ In this context, I am not sure what “quasilinear” means, but the condition t
 sin((30*x+2*%pi)/5)+(%i*sin(%pi/5)+cos(%pi/5))*cos((30*x+2*%pi)/5)+(sin(%pi/5)-%i*cos(%pi/5))*sin(4*x)+(-(%i*sin(%pi/5))-cos(%pi/5))*cos(4*x))/(sin((30*x+2*%pi)/5)^2+
 (-(2*%i*cos((30*x+2*%pi)/5))-2*sin(4*x)+2*%i*cos(4*x))*sin((30*x+2*%pi)/5)-cos((30*x+2*%pi)/5)^2+(2*%i*sin(4*x)+2*cos(4*x))*cos((30*x+2*%pi)/5)+sin(4*x)^2-2*%i*cos(4*x)*sin(4*x)-cos(4*x)^2)
 ```
-The result is a quotient of Fourier sums, not a Fourier sum.
+The result is a quotient of Fourier sums, not a Fourier sum.  Both the current `trigrat` function and this rewrite, achieve the linearization by through rational simplification (`ratsimp`) with the option variable `algebraic` set to true. This works for some cases, but
+not all. 
 
 Here is a step-by-step partial fraction-based method that shows how this expression can be linearized:
 
