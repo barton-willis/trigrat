@@ -86,13 +86,13 @@ But the function `xtrigrat` attempts to preserve the structure of the input as m
     
   - Write a regression test for `trigrat`. 
 
-  - Incorporate feedback from Maxima users and developers and improve the code.
+  - Incorporate feedback from Maxima users and developers and improve the code and the algorithm.
 
   - Decide if the function `xtrigrat` is worthy of developing (and possibly give it a new name).
 
   - Make sure that for quotients of trigonometric polynomials, `trigrat` returns
     a trigonometric polynomial when ever this is possible. The code relies on
     rational simplification with `algebraic` set to true to do this. Although
-    this seems to work, I'm not sure that it handles all the cases that it should.
+    this works for some examples, I'm not sure that it handles all the cases that it should.
     
   
