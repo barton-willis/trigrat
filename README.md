@@ -90,10 +90,7 @@ But the function `xtrigrat` attempts to preserve the structure of the input as m
 
   - Decide if the function `xtrigrat` is worthy of developing (and possibly give it a new name).
 
-  - Make sure that for quotients of trigonometric polynomials, `trigrat` returns
-    a trigonometric polynomial when ever this is possible. The code relies on
-    rational simplification with `algebraic` set to true to do this. Although
-    this works for some examples, I'm not sure that it handles all the cases that it should.
+  - Both my code and the current code fail to linearize some quotients of trigonometric polynomials. The last section gives a possible way to fix this.  
     
 ### Speculation on a partial fraction-based algorithm
 
