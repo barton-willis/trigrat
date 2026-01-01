@@ -90,7 +90,7 @@ But the function `xtrigrat` attempts to preserve the structure of the input as m
 
   - Decide if the function `xtrigrat` is worthy of developing (and possibly give it a new name).
 
-  - Both my code and the current code fail to linearize some quotients of trigonometric polynomials. The last section gives a possible way to fix this.  
+  - Both my code and the current code fail to linearize some quotients of trigonometric polynomials. This should be fixed. The last section gives a possible alternative algorithm.  
     
 ### Speculation on a partial fraction-based algorithm
 
