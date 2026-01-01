@@ -45,6 +45,8 @@ But the function `xtrigrat` attempts to preserve the structure of the input as m
 
   - Write user documentation. 
 
+  -  Experiment with giving trigrat an optional argument that turns off the simplification heuristic.
+    
   - Write a regression test for `trigrat`. 
 
   - Incorporate feedback from Maxima users and developers and improve the code.
