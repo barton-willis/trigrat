@@ -53,4 +53,5 @@ But the function `xtrigrat` attempts to preserve the structure of the input as m
     a trigonometric polynomial when ever this is possible. The code relies on
     rational simplification with `algebraic` set to true to do this. Although
     this seems to work, I'm not sure that it handles all the cases that it should.
+    
   
