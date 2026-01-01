@@ -1,11 +1,57 @@
 # Trigonometric Rationalization for Maxima
 
-The Maxima function `trigrat` attempts to simplify expressions that involve trigonometric expressions. Specifically, it converts trigonometric expressions into exponential form, simplifies them algebraically, and returns a simplified expression. 
+The Maxima function `trigrat` attempts to simplify expressions that involve trigonometric expressions. Specifically, it converts trigonometric expressions into exponential form, simplifies them algebraically, and returns a simplified expression. For a [trigonometric polynomial](https://en.wikipedia.org/wiki/Trigonometric_polynomial), `trigrat` produces its Fourier representation; here are two examples:
+```maxima
+(%i1) trigrat(2 + 4*sin(x) + 6*sin(x)^2);
+(%o1)                     - 3 cos(2 x) + 4 sin(x) + 
 
+(%i2) trigrat(2 + 4*sin(x) + 6*sin(x)^2 * cos(2*x));
+                     3 cos(4 x) - 6 cos(2 x) - 8 sin(x) - 1
+(%o2)              - ──────────────────────────────────────
+                                       2
+```
+Arguably, the Fourier representation is not a “simplification,” (meaning make presentable for publication) but the Fourier representation is *canonical*; by this we mean that:
+
+- Every two mathematically equivalent trigonometric polynomials have identical Fourier representations.
+- Distinct trigonometric polynomials have distinct Fourier representations.
+
+For a *quotient* of trigonometric polynomials, `trigrat` produces a Fourier representations when ever possible; for
+example
+```maxima
+(%i1) trigrat(sin(3*x)/sin(x + %pi/3));
+(%o1)                   sqrt(3) sin(2 x) + cos(2 x) - 1
+```
+
+For inputs that are not trigonometric polynomials or quotients of them, `trigrat` produces its output following the 
+steps:
+
+- converts trigonometric functions to exponential form (`exponentialize`)
+- rationally simplifies (`ratsimp`)
+- expands
+- converts from exponential form to trigonometric form (`demoivre`)
+- rationally simplifies (`ratsimp`)
+
+Some of the rational simplification is done with the option variable `algebraic` set to true.
+
+As a convenience feature, `trigrat` has an optional second argument (default true) that when `false` forces 
+`trigrat` to return the input unchanged when the process results in an expression with a greater number of trigonometric
+functions; examples
+
+```maxima
+(%i1) trigrat(cos(x)^5*sin(2*x),true);
+                 sin(7 x) + 5 sin(5 x) + 9 sin(3 x) + 5 sin(x)
+(%o1)            ─────────────────────────────────────────────
+                                      32
+(%i2) trigrat(cos(x)^5*sin(2*x),false);
+                                  5
+(%o2)                          cos (x) sin(2 x)
+```
+
+### History
 This is a from‑scratch revision of the Maxima function `trigrat`, originally written by D. Lazard in August 1988. Since then, the code has been modified by many contributors. This version follows essentially the same method as the original, but introduces a new metric based on the number of trigonometric operators that guides the simplification process. Using this metric, the function may return the input expression unchanged when it contains fewer trigonometric operators than the simplified result. 
 
-Because of this simplification heuristic, the function `trigrat` does *not* return a canonical representation — thus it is possible that `trigrat` will simplify equivalent expressions to syntactically distinct expressions. I will 
-experiment with giving `trigrat` an optional argument that turns off the simplification heuristic.
+
+### Motivation
 
 This revision attempts to fix all open reported bugs in `trigrat`:
 
@@ -16,16 +62,10 @@ This revision attempts to fix all open reported bugs in `trigrat`:
 In fairness to the original author, it is possible that some of these bugs are due to changes to Maxima or to bugs
 introduced to the package after the initial version of `trigrat`. 
 
-The experimental function `xtrigrat` is similar to `trigrat`, but it attempts to change the input as little as possible. For example, `xtrigrat` avoids expanding terms that are free of trigonometric operators, whereas `trigrat` will expand them.
 
-### Examples
+### Experimental function `xtrigrat`
+The experimental function `xtrigrat` is similar to `trigrat`, but it attempts to change the input as little as possible. For example, `xtrigrat` avoids expanding terms that are free of trigonometric operators, whereas `trigrat` will expand them. Some examples:
 
-```maxima
-(%i1) trigrat(sin(x)^2 + cos(x)^2);
-(%o1)                                  1
-(%i2) trigrat(sin(3*x)/(sin(x + %pi/3)));
-(%o2)                   sqrt(3) sin(2 x) + cos(2 x) - 1
-```
 The function `trigrat` expands terms in the expression that do not depend on trigonometric functions:
 ```maxima
 (%i3) trigrat((1+x)^3 + sin(x)^2 + cos(x)^2);
@@ -45,11 +85,13 @@ But the function `xtrigrat` attempts to preserve the structure of the input as m
 
   - Write user documentation. 
 
-  -  Experiment with giving trigrat an optional argument that turns off the simplification heuristic.
+  - Fix the way `trigrat` behaves for expressions involving the trigonometric functions other than cosine and sine. 
     
   - Write a regression test for `trigrat`. 
 
   - Incorporate feedback from Maxima users and developers and improve the code.
+
+  - Decide if the function `xtrigrat` is worthy of developing (and possibly give it a new name).
 
   - Make sure that for quotients of trigonometric polynomials, `trigrat` returns
     a trigonometric polynomial when ever this is possible. The code relies on
