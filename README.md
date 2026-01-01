@@ -43,12 +43,14 @@ But the function `xtrigrat` attempts to preserve the structure of the input as m
 
   - Document how to load `trigrat` into Maxima.
 
-  - Write user documentation that clarifies the meaning of the current documention: *"Gives a canonical simplified quasilinear form of a trigonometrical expression."* 
+  - Write user documentation. 
 
   - Write a regression test for `trigrat`. 
 
   - Incorporate feedback from Maxima users and developers and improve the code.
 
   - Make sure that for quotients of trigonometric polynomials, `trigrat` returns
-    a trigonometric polynomial when ever this is possible. 
+    a trigonometric polynomial when ever this is possible. The code relies on
+    rational simplification with `algebraic` set to true to do this. Although
+    this seems to work, I'm not sure that it handles all the cases that it should.
   
