@@ -74,14 +74,13 @@ STEP 'd'
            (fapply (caar e) (mapcar #'(lambda (q) ($trigrat q canonical)) (cdr e))))
 
         (t
-          (let* ((n (trig-count e))
-                (ans
+          (let* ((ans
                   (sratsimp
                      ($demoivre 
                         ($expand 
                            (let (($algebraic t)) (sratsimp ($exponentialize e))))))))
              ;; conditionally return either e or ans
-             (if (or canonical (< (trig-count ans) n))
+             (if (or canonical (< (trig-count ans) (trig-count e)))
                ans
                e
                )))))
