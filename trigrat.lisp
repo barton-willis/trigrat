@@ -74,7 +74,7 @@ STEP 'd'
            (fapply (caar e) (mapcar #'(lambda (q) ($trigrat q canonical)) (cdr e))))
 
         (t
-          (let* ((n (+ (trig-count e) 5)) ;5 is a magic number--it gives the input a disadvantage
+          (let* ((n (trig-count e))
                 (ans
                   (sratsimp
                      ($demoivre 
