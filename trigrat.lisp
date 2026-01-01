@@ -86,25 +86,16 @@ STEP 'd'
                e
                )))))
 
-;; need to check what the function partition does...maybe this function isn' needed?
-(defun xpartition (e fn)
-   (let ((p nil) (q nil))
-      (dolist (ek e)
-         (if (funcall fn ek)
-             (push ek p)
-             (push ek q)))
-      (values p q)))
-
 (defmfun $xtrigrat (e &optional (canonical nil))
 "Similar to `trigrat`, but attempt to change the structure of the input as little as possible. "
    (cond ((or ($mapatom e) (eql 0 (trig-count e))) e)
          ;; for either a sum or a product, apply `trigrat` only to the terms that involve a
          ;; trig function. This avoids unnecessary expansion: try trigrat((1+x)^2 + sin(x)^2 + cos(x)^2)
          ((mplusp e)
-           (multiple-value-bind (p q) (xpartition (cdr e) #'(lambda (q) (eql 0 (trig-count q))))
+           (multiple-value-bind (p q) (partition-by #'(lambda (q) (eql 0 (trig-count q))) (cdr e))
              (add (fapply 'mplus p) ($trigrat (fapply 'mplus q) canonical))))
           ((mtimesp e)
-           (multiple-value-bind (p q) (xpartition (cdr e) #'(lambda (q) (eql 0 (trig-count q))))
+           (multiple-value-bind (p q) (partition-by  #'(lambda (q) (eql 0 (trig-count q))) (cdr e))
              (add (fapply 'mtimes p) ($trigrat (fapply 'mtimes q) canonical))))
           ;; Does this need to check for subscripted functions? Yes it does!
           (($subvarp (mop e)) ;subscripted function
