@@ -104,8 +104,7 @@ The user documentation says:
 *Gives a canonical simplified quasilinear form of a trigonometrical expression. `expr` is a rational fraction of several `sin`, `cos`, or `tan` whose arguments are linear forms in some variables (or kernels) and `%pi/n` (with integer `n`) and
 integer coefficients. The result is a simplified fraction whose numerator and denominator are linear in `sin` and `cos`. Thus `trigrat` linearizes whenever it is possible.*
 
-But the condition that `trigrat(expr)` "linearizes whenever it is possible" is *not* true; for example
-the current `trigrat` fails miserably on for this case:
+But the condition that `trigrat(expr)` "linearizes whenever it is possible" is *not* true; for example, the current `trigrat` and my rewrite both fail miserably for this case:
 
 ```maxima
 (%i1)	trigrat(sin(5*x)/sin(x+%pi/5));
