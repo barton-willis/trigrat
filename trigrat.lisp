@@ -62,7 +62,7 @@ STEP 'd'
 
 ;; D. Lazard wrote the initial version of `trigrat` in August 1988. Since then, the code has been modified and
 ;; rewritten by many contributors. For the historical record since about 2000, consult the Git history.
-(defmfun $trigrat (e &optional canonical)
+(defmfun $trigrat (e &optional (canonical nil))
  "Simplify a trigonometric expression `e` by exponential substitution, expansion, and 
   rational simplification. This function does *not* return canonical representation--it 
   is possible that trigrat will simplify equivalent expressions to syntactically distinct 
@@ -71,7 +71,7 @@ STEP 'd'
   (cond (($mapatom e) e)
 
         ((or (mbagp e) ($setp e) (mrelationp e)) ;map trigrat over mbags, sets, and inequations.
-           (fapply (caar e) (mapcar #'$trigrat (cdr e))))
+           (fapply (caar e) (mapcar #'(lambda (q) ($trigrat q canonical)) (cdr e))))
 
         (t
           (let* ((n (+ (trig-count e) 5)) ;5 is a magic number--it gives the input a disadvantage
@@ -95,7 +95,7 @@ STEP 'd'
              (push ek q)))
       (values p q)))
 
-(defmfun $xtrigrat (e &optional canonical)
+(defmfun $xtrigrat (e &optional (canonical nil))
 "Similar to `trigrat`, but attempt to change the structure of the input as little as possible. "
    (cond ((or ($mapatom e) (eql 0 (trig-count e))) e)
          ;; for either a sum or a product, apply `trigrat` only to the terms that involve a
