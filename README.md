@@ -153,3 +153,14 @@ Here is a step-by-step partial fraction-based method that shows how such a metho
 (%i12)	ratsimp(%);
 (%o12)	(sqrt(sqrt(5)+5)*((sqrt(2)*sqrt(5)-sqrt(2))*sin(4*x)+2^(3/2)*sin(2*x))+(2*sqrt(5)+2)*cos(4*x)+(2-2*sqrt(5))*cos(2*x)-4)/4
 ```
+
+When `ntrig` is unable to convert the exponentials to algebraic form, we have a bit of a problem. Without `ntrig`, we
+get
+
+```maxima
+(%i90)	partfrac(%,g);
+(%o90)	-(%e^((4*%i*%pi)/5)*g^4)-%e^((2*%i*%pi)/5)*g^2+%e^((3*%i*%pi)/5)/g^2+%e^((%i*%pi)/5)/g^4-1
+```
+To get value out of this that is explicitly real, we need to convert `-%e^((2*%i*%pi)/5` to `%e^(%i*%pi + (2*%i*%pi)/5`,
+and similarly for the other coefficients. Without doing this, we'll get a result that has an imaginary part
+that vanishes, but is not explicitly zero.  This bug is present in the current `trigrat`. 
