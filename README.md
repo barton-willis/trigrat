@@ -161,6 +161,6 @@ get
 (%i90)	partfrac(%,g);
 (%o90)	-(%e^((4*%i*%pi)/5)*g^4)-%e^((2*%i*%pi)/5)*g^2+%e^((3*%i*%pi)/5)/g^2+%e^((%i*%pi)/5)/g^4-1
 ```
-To get value out of this that is explicitly real, we need to convert `-%e^((2*%i*%pi)/5` to `%e^(%i*%pi + (2*%i*%pi)/5`,
+To get a value out of this that is explicitly real, we need to convert `-%e^((2*%i*%pi)/5` to `%e^(%i*%pi + (2*%i*%pi)/5`,
 and similarly for the other coefficients. Without doing this, we'll get a result that has an imaginary part
 that vanishes, but is not explicitly zero.  This bug is present in the current `trigrat`. 
