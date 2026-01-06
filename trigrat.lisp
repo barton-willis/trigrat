@@ -1,5 +1,6 @@
 (in-package :maxima)
 
+
 #|
 The function trigrat attempts to simplify a rational expression in trig functions. Basically it
 
@@ -110,6 +111,7 @@ gather_exp_args(e) := block([],
     (t (mapcan #'gather-exp-args (cdr e))))) ;map gather-exp-args over args and collect 
 
 (defmfun $trigrat (e &optional (canonical t))
+  (flet ((aratsimp (x) (let (($algebraic t)) (simplify ($ratsimp x '$%i)))))
   (cond (($mapatom e) e)
         ((or (mbagp e) ($setp e) (mrelationp e)) ; map trigrat over mbags, sets, and inequations.
          (fapply (caar e) (mapcar #'(lambda (q) ($trigrat q canonical)) (cdr e))))
@@ -126,7 +128,7 @@ gather_exp_args(e) := block([],
                    (ker (ftake 'mexpt '$%e (second ecx))))
                (push (ftake 'mequal g ker) subs)
                (setq e ($ratsubst g ker e))))
-           (setq e (let (($algebraic t)) ($ratsimp e '$%i)))
+           (setq e (aratsimp e))
            ;(mtell "e = ~M ~%" e)
            (let ((p ($num e)) (q ($denom e)) (pdeg 0) (qdeg 0) (n) (z))
              ;(mtell "subs = ~M" (fapply 'mlist subs))
@@ -143,11 +145,11 @@ gather_exp_args(e) := block([],
                ;(mtell "subx = ~M ~%" subx)
                (setq p (maxima-substitute (third subx) (second subx) p))
                (setq q (maxima-substitute (third subx) (second subx) q)))
-             (let ((ans (let ((algebraic t)) ($ratsimp (div ($demoivre p) ($demoivre q))))))
+             (let ((ans (aratsimp ($ratsimp (div ($demoivre p) ($demoivre q)) '$%i))))
                ;; conditionally return either e or ans
                (if (or canonical (< (trig-count ans) (trig-count e)))
                    ans
-                   e)))))))
+                   e))))))))
 
    
 (defun trig-count (e)

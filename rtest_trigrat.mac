@@ -104,7 +104,7 @@ trigrat((sin(3*x)-tan(2*x))/cos(4*x));
 (sin(5*x)-2*sin(2*x)+sin(x))/(cos(6*x)+cos(2*x))$
 
 trigrat((sin(x)^3 + cos(x)^3)/(sin(x)+cos(x)));
--((sin(3*x)-cos(3*x)-3*sin(x)-3*cos(x))/(4*sin(x)+4*cos(x)))$
+-((sin(2*x)-2)/2)$
 
 trigrat(sin(x+y));
 sin(x+y)$
@@ -143,11 +143,84 @@ trigrat((tan(3*x)^2 - tan(2*x))/(sin(x)*cos(x)));
 trigrat((sin(5*x)+cos(4*x)+tan(3*x))/(sin(2*x)-cos(2*x)));
 (sin(8*x)+cos(7*x)+2*sin(3*x)+sin(2*x)+cos(x))/(sin(5*x)-cos(5*x)-sin(x)-cos(x))$
 
-/* quotients--need more of these--most are, I think, failing.  */
+/* quotients--need more of these--but most are failing--try sin(5*x)/sin(x + %pi/5)  */
  trigrat(sin(3*x)/sin(x+%pi/3));
  sqrt(3) * sin(2 * x) + cos(2 * x) - 1$
 
+/* reported bugs: fixed and unfixed */
 
- 
+/* 4554 trigrat often makes expressions unnecessarily complicated */
+ trigrat(f(sin(2*x)));
+f(sin(2*x))$
+
+ trigrat(c^x * sin(x));
+c^x * sin(x)$
+
+block([ratfac : false], trigrat(exp(x)*sin(x)));
+exp(x)*sin(x)$
+
+block([ratfac : true], trigrat(exp(x)*sin(x)));
+exp(x)*sin(x)$
+
+trigrat((tan(3*x)^2 - tan(2*x))/(sin(x)*cos(x)));
+(4*sin(7*x)-4*cos(7*x)+4*sin(5*x)-4*cos(5*x)+8*sin(3*x)-8*cos(x))/(cos(9*x)+cos(7*x)+cos(5*x)+3*cos(3*x)+2*cos(x))$
+
+/* 4486 trigrat(atan2(1,sin(k))) gives error */
+trigrat(atan2(1,sin(k)));
+atan2(1,sin(k))$
+
+
+ /* 2918 trigrat crashes sometimes because it pollutes ?varlist*/
+
+ /* 2913 trigrat crashes with variable name "e" */
+ trigrat(d^x * sin(x));
+ d^x*sin(x)$
+
+ trigrat(e^x * sin(x));
+ e^x * sin(x)$
+
+/* 2263 trigrat(sin(%pi/5)) makes mess */
+trigrat(sin(%pi/5));
+sin(%pi/5)$
+
+/* #2262 trigrat() causes an error */
+trigrat((cos(x)+(sqrt(3)+2)*sin(x)-4*sin(5*%pi/12)*cos(x-(7*%pi)/12))/cos(x));
+2$
+
+/* 1985 trigrat(sin(1)) makes mess */
+trigrat(sin(1));
+sin(1)$
+
+/* 1218 trigrat dies on a matrix */
+block([
+p1:matrix([1,0],[0,-1]),
+p2:matrix([0,1],[1,0]),
+p3:matrix([0,1],[-1,0]),
+S:s1*p1+s2*p2+s3*p3,
+M:(ident(2)-coth(del*t/2)/del*S)],
+trigrat(M));
+matrix([((%e^(t*del)-1)*del+(-%e^(t*del)-1)*S)/((%e^(t*del)-1)*del),
+               -(((%e^(t*del)+1)*S)/((%e^(t*del)-1)*del))],
+              [-(((%e^(t*del)+1)*S)/((%e^(t*del)-1)*del)),
+               ((%e^(t*del)-1)*del+(-%e^(t*del)-1)*S)/((%e^(t*del)-1)*del)])$
+
+/* 1194 trigrat(sin('x)) captures x */
+(x:y, trigsimp('x), trigrat ('x));
+x$
+
+(remvalue(x),0);
+0$
+
+/* 987 trigrat doesn't distribute over = */
+trigrat(sin(a+%pi/3)+sin(3*a)=0);
+(2*sin(3*a)+sin(a)+sqrt(3)*cos(a))/2 = 0$
+
+/* #361 trigrat(sin(1)) internal error /FIX*/
+trigrat(sin(1));
+sin(1)$
+
+/* #41 trigrat () crashes on example in manual */
+ trigrat(sin(3*a)/sin(a+%pi/3));
+sqrt(3)*sin(2*a)+cos(2*a)-1$
 
  
