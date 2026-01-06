@@ -116,6 +116,7 @@ gather_exp_args(e) := block([],
         (t
          (let* (($radsubstflag t)
                 (e ($exponentialize e))
+                ($%e_to_numlog t)
                 (subs nil)
                 (lll (fapply '$set (gather-exp-args e)))
                 (ec ($equiv_classes lll #'(lambda (a b) ($ratnump (div a b)))))) ; the members of lll are not zero.
@@ -142,7 +143,7 @@ gather_exp_args(e) := block([],
                ;(mtell "subx = ~M ~%" subx)
                (setq p (maxima-substitute (third subx) (second subx) p))
                (setq q (maxima-substitute (third subx) (second subx) q)))
-             (let ((ans (sratsimp (div ($demoivre p) ($demoivre q)))))
+             (let ((ans (let ((algebraic t)) ($ratsimp (div ($demoivre p) ($demoivre q))))))
                ;; conditionally return either e or ans
                (if (or canonical (< (trig-count ans) (trig-count e)))
                    ans
