@@ -97,8 +97,8 @@ gather_exp_args(e) := block([],
 
 (defun gather-exp-args (e)
  "Return a Common Lisp list (not a Maxima list) of all exponents X such that
-   the expression E contains a subexpression of the form (mexpt %e X), when 
-   X isn't a sum, and when X is a sum return a list of the arguments of the sum.
+   the expression E contains a subexpression of the form ((mexpt) %e X).  When 
+   X isn't a sum, return (list X), and when X is a sum return return (cdr X).
    Since exp(a+b) = exp(a) exp(b), the returned list is at least partially semantic.
    The resulting list is unsorted and may contain duplicates."
   (cond
@@ -106,21 +106,37 @@ gather_exp_args(e) := block([],
     ((and (mexptp e) (eq (second e) '$%e)) ; term has the form ((mexpt) %e X), return (list X)
      (if (mplusp (third e))
         (third e)
-        (list (third e)))) ;oh, the docstring needs to be updated 
+        (list (third e)))) 
     (t (mapcan #'gather-exp-args (cdr e))))) ;map gather-exp-args over args and collect 
 
 (defmfun $faketrigrat (e)
    (let* (($radsubstflag t) 
           (e ($exponentialize e))
+          (subs nil)
           (lll (fapply '$set (gather-exp-args e)))
           (ec ($equiv_classes lll #'(lambda (a b) ($ratnump (div a b)))))) ;the members of lll are not zero.
     (setq ec (mapcar #'(lambda (s) ($apply '$ezgcd ($listify s))) (cdr ec)))
-    (fapply 'mlist ec)))
-
+    (dolist (ecx ec)
+      (let ((g (gensym)) (ker (ftake 'mexpt '$%e (second ecx))))
+         (push (ftake 'mequal g ker) subs)
+         (setq e ($ratsubst g ker e))))
+    (setq e ($ratsimp e '$%i))
+    (mtell "e = ~M ~%" e)
+    (let ((p ($num e)) (q ($denom e)) (pdeg) (qdeg) (n) (z))
+      (dolist (subx subs)
+        (setq z (second subx))
+        (setq pdeg ($hipow p z))
+        (setq qdeg ($hipow q z)))
+      (setq n (ftake '$floor (div (max pdeg qdeg) 2)))
+      (setq p ($expand (div p (ftake 'mexpt z n))))
+      (setq q ($expand (div q (ftake 'mexpt z n))))
+      (mtell "p = ~M ; q = ~M ~%" p q)
+      (dolist (subx subs)
+        (mtell "subx = ~M ~%" subx)
+        (setq p (maxima-substitute (third subx) (second subx) p))
+        (setq q (maxima-substitute (third subx) (second subx) q)))
+      (sratsimp (div ($demoivre p) ($demoivre q))))))
    
-  
-
-
 (defun trig-count (e)
  "Return the number of trigonometric operators, including the hyperbolic operators, in the Maxima expression `e`."
    (cond ((atom e) 0)
