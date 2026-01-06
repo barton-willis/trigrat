@@ -125,7 +125,7 @@ gather_exp_args(e) := block([],
                    (ker (ftake 'mexpt '$%e (second ecx))))
                (push (ftake 'mequal g ker) subs)
                (setq e ($ratsubst g ker e))))
-           (setq e ($ratsimp e '$%i))
+           (setq e (let (($algebraic t)) ($ratsimp e '$%i)))
            ;(mtell "e = ~M ~%" e)
            (let ((p ($num e)) (q ($denom e)) (pdeg 0) (qdeg 0) (n) (z))
              ;(mtell "subs = ~M" (fapply 'mlist subs))

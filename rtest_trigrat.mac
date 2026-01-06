@@ -143,8 +143,11 @@ trigrat((tan(3*x)^2 - tan(2*x))/(sin(x)*cos(x)));
 trigrat((sin(5*x)+cos(4*x)+tan(3*x))/(sin(2*x)-cos(2*x)));
 (sin(8*x)+cos(7*x)+2*sin(3*x)+sin(2*x)+cos(x))/(sin(5*x)-cos(5*x)-sin(x)-cos(x))$
 
-/* quotients */
+/* quotients--need more of these--some are, I think, failing.  */
  trigrat(sin(3*x)/sin(x+%pi/3));
  (2*sin(3*x))/(sin(x)+sqrt(3)*cos(x))$
+
+
+ 
 
  
