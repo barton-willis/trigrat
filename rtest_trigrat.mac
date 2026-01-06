@@ -1,0 +1,118 @@
+/* constants */
+trigrat(sqrt(2));
+sqrt(2)$
+
+trigrat(42);
+42$
+
+trigrat(%pi/8);
+%pi/8$
+
+trigrat(sin(x));
+sin(x)$
+
+trigrat(cos(x));
+cos(x)$
+
+trigrat(tan(x));
+sin(x)/cos(x)$
+
+trigrat(sin(2*x));
+sin(2*x)$
+
+trigrat(cos(2*x));
+cos(2*x)$
+
+trigrat(tan(2*x));
+sin(2*x)/cos(2*x)$
+
+trigrat(sin(x)/cos(x));
+sin(x)/cos(x)$
+
+trigrat((sin(x)+cos(x))/tan(x));
+(sin(2*x)+cos(2*x)+1)/(2*sin(x))$
+
+trigrat((sin(x)^2 - cos(x)^2)/(sin(x)*cos(x)));
+-((2*cos(2*x))/sin(2*x))$
+
+trigrat(sin(x+%pi/3));
+(sin(x)+sqrt(3)*cos(x))/2$
+
+trigrat(cos(x-%pi/4));
+trigrat(cos(x-%pi/4))$
+
+trigrat(tan(x+%pi/6));
+-((sqrt(3)*sin(x)+cos(x))/(sin(x)-sqrt(3)*cos(x)))$
+
+trigrat(sin(3*x)/cos(3*x));
+sin(3*x)/cos(3*x)$
+
+trigrat((sin(3*x)+cos(2*x))/sin(x));
+(sin(3*x)+cos(2*x))/sin(x)$
+
+trigrat((tan(2*x)+tan(3*x))/(sin(x)+cos(x)));
+(4*sin(5*x))/(sin(6*x)+cos(6*x)-sin(4*x)+cos(4*x)+sin(2*x)+cos(2*x)+1)$
+
+trigrat((sin(x)+sin(2*x))/cos(3*x));
+(sin(2*x)+sin(x))/cos(3*x)$
+
+trigrat((cos(x)-cos(2*x))/sin(3*x));
+(cos(x)-cos(2*x))/sin(3*x)$
+
+trigrat((sin(x)*cos(x))/sin(2*x));
+1/2$
+
+trigrat((sin(x)+1)/(cos(x)-1));
+(sin(x)+1)/(cos(x)-1)$
+
+trigrat((1-sin(x))/(1+cos(x)));
+(1-sin(x))/(1+cos(x))$
+
+trigrat((tan(x)-1)/(tan(x)+1));
+(sin(x)-cos(x))/(sin(x)+cos(x))$
+
+trigrat((sin(x)+cos(x)+tan(x))/sin(2*x));
+(sin(2*x)+cos(2*x)+2*sin(x)+1)/(sin(3*x)+sin(x))$
+
+trigrat((sin(3*x)-tan(2*x))/cos(4*x));
+(sin(5*x)-2*sin(2*x)+sin(x))/(cos(6*x)+cos(2*x))$
+
+trigrat((sin(x)^3 + cos(x)^3)/(sin(x)+cos(x)));
+-((sin(3*x)-cos(3*x)-3*sin(x)-3*cos(x))/(4*sin(x)+4*cos(x)))$
+
+trigrat(sin(x+y));
+sin(x+y)$
+
+trigrat(cos(x-y));
+cos(x-y)$
+
+trigrat(tan(x+y));
+sin(x+y)/cos(x+y)$
+
+trigrat(sin(a*x + %pi/5));
+sin(a*x + %pi/5)$
+
+trigrat(cos(b*x - %pi/7));
+cos(b*x - %pi/7)$
+
+trigrat(tan(c*x + %pi/9));
+sin(c*x+%pi/9)/cos(c*x+%pi/9)$
+
+trigrat((sin(x)+sin(y)+sin(z))/(cos(x)+cos(y)+cos(z)));
+(sin(x)+sin(y)+sin(z))/(cos(x)+cos(y)+cos(z))$
+
+trigrat((sin(2*x)+cos(3*y))/tan(4*z));
+(sin(2*x)+cos(3*y))/tan(4*z)$
+
+trigrat((sin(x)*sin(y))/(cos(x)*cos(y)));
+(sin(x)*sin(y))/(cos(x)*cos(y))$
+
+trigrat((sin(x)^2 + sin(2*x))/(cos(x)^2 + cos(2*x)));
+(2*sin(2*x)-cos(2*x)+1)/(3*cos(2*x)+1)$
+
+trigrat((tan(3*x)^2 - tan(2*x))/(sin(x)*cos(x)));
+(4*sin(7*x)-4*cos(7*x)+4*sin(5*x)-4*cos(5*x)+8*sin(3*x)-8*cos(x))
+ /(cos(9*x)+cos(7*x)+cos(5*x)+3*cos(3*x)+2*cos(x))$
+
+trigrat((sin(5*x)+cos(4*x)+tan(3*x))/(sin(2*x)-cos(2*x)));
+(sin(8*x)+cos(7*x)+2*sin(3*x)+sin(2*x)+cos(x))/(sin(5*x)-cos(5*x)-sin(x)-cos(x))$

@@ -109,33 +109,45 @@ gather_exp_args(e) := block([],
         (list (third e)))) 
     (t (mapcan #'gather-exp-args (cdr e))))) ;map gather-exp-args over args and collect 
 
-(defmfun $faketrigrat (e)
-   (let* (($radsubstflag t) 
-          (e ($exponentialize e))
-          (subs nil)
-          (lll (fapply '$set (gather-exp-args e)))
-          (ec ($equiv_classes lll #'(lambda (a b) ($ratnump (div a b)))))) ;the members of lll are not zero.
-    (setq ec (mapcar #'(lambda (s) ($apply '$ezgcd ($listify s))) (cdr ec)))
-    (dolist (ecx ec)
-      (let ((g (gensym)) (ker (ftake 'mexpt '$%e (second ecx))))
-         (push (ftake 'mequal g ker) subs)
-         (setq e ($ratsubst g ker e))))
-    (setq e ($ratsimp e '$%i))
-    (mtell "e = ~M ~%" e)
-    (let ((p ($num e)) (q ($denom e)) (pdeg) (qdeg) (n) (z))
-      (dolist (subx subs)
-        (setq z (second subx))
-        (setq pdeg ($hipow p z))
-        (setq qdeg ($hipow q z)))
-      (setq n (ftake '$floor (div (max pdeg qdeg) 2)))
-      (setq p ($expand (div p (ftake 'mexpt z n))))
-      (setq q ($expand (div q (ftake 'mexpt z n))))
-      (mtell "p = ~M ; q = ~M ~%" p q)
-      (dolist (subx subs)
-        (mtell "subx = ~M ~%" subx)
-        (setq p (maxima-substitute (third subx) (second subx) p))
-        (setq q (maxima-substitute (third subx) (second subx) q)))
-      (sratsimp (div ($demoivre p) ($demoivre q))))))
+(defmfun $trigrat (e &optional (canonical t))
+  (cond (($mapatom e) e)
+        ((or (mbagp e) ($setp e) (mrelationp e)) ; map trigrat over mbags, sets, and inequations.
+         (fapply (caar e) (mapcar #'(lambda (q) ($trigrat q canonical)) (cdr e))))
+        (t
+         (let* (($radsubstflag t)
+                (e ($exponentialize e))
+                (subs nil)
+                (lll (fapply '$set (gather-exp-args e)))
+                (ec ($equiv_classes lll #'(lambda (a b) ($ratnump (div a b)))))) ; the members of lll are not zero.
+           (setq ec (mapcar #'(lambda (s) ($apply '$ezgcd ($listify s))) (cdr ec)))
+           (dolist (ecx ec)
+             (let ((g (gensym))
+                   (ker (ftake 'mexpt '$%e (second ecx))))
+               (push (ftake 'mequal g ker) subs)
+               (setq e ($ratsubst g ker e))))
+           (setq e ($ratsimp e '$%i))
+           ;(mtell "e = ~M ~%" e)
+           (let ((p ($num e)) (q ($denom e)) (pdeg 0) (qdeg 0) (n) (z))
+             ;(mtell "subs = ~M" (fapply 'mlist subs))
+             (dolist (subx subs)
+               (setq z (second subx))
+               (setq pdeg ($hipow p z))
+               (setq qdeg ($hipow q z)))
+             (setq n (ftake '$floor (div (max pdeg qdeg) 2)))
+             ;(mtell "p = ~M ; q = ~M ~%" p q)
+             (setq p ($expand (div p (ftake 'mexpt z n))))
+             (setq q ($expand (div q (ftake 'mexpt z n))))
+             ;(mtell "p = ~M ; q = ~M ~%" p q)
+             (dolist (subx subs)
+               ;(mtell "subx = ~M ~%" subx)
+               (setq p (maxima-substitute (third subx) (second subx) p))
+               (setq q (maxima-substitute (third subx) (second subx) q)))
+             (let ((ans (sratsimp (div ($demoivre p) ($demoivre q)))))
+               ;; conditionally return either e or ans
+               (if (or canonical (< (trig-count ans) (trig-count e)))
+                   ans
+                   e)))))))
+
    
 (defun trig-count (e)
  "Return the number of trigonometric operators, including the hyperbolic operators, in the Maxima expression `e`."
@@ -146,7 +158,7 @@ gather_exp_args(e) := block([],
 
 ;; D. Lazard wrote the initial version of `trigrat` in August 1988. Since then, the code has been modified and
 ;; rewritten by many contributors. For the historical record since about 2000, consult the Git history.
-(defmfun $trigrat (e &optional (canonical t))
+(defmfun $trigrat_old (e &optional (canonical t))
  "Simplify a trigonometric expression `e` by exponential substitution, expansion, and 
   rational simplification. This function does *not* return canonical representation--it 
   is possible that trigrat will simplify equivalent expressions to syntactically distinct 
