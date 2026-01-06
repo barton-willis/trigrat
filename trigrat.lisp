@@ -50,8 +50,76 @@ STEP 'd'
 
 (%o8) sqrt(3)*sin(2*a)+cos(2*a)-1
 
+load("opsubst");
+gather_exp_args(e) := block([],
+  args : gatherargs(e,"^"),
+  args
+(%i445)	fake_trigrat(e,ker1,ker2) := block([g1 : gensym(), g2 : gensym(), p,q],
+	     e :  exponentialize(e),
+	     e : ratsubst(g1,ker1,e),
+	     e : ratsubst(g2,ker2,e),
+	     e : ratsimp(e,'%i),
+	    
+	     print("e = ",e),
+	     p : expand(num(e)),
+	     q : expand(denom(e)),
+	     
+	     print([p,q]),
+	     pdeg : hipow(p,g1),
+	     qdeg : hipow(q,g1),
+	     n1 : floor(max(pdeg, qdeg)/2),
+	    
+	     print("n1 = ",n1),
+	    
+	    
+	     pdeg : hipow(p,g2),
+	     qdeg : hipow(q,g2),
+	     n2 : floor(max(pdeg, qdeg)/2),
+	    
+	     print("n2 = ",n2),
+	     p : (p/(g1^n1 * g2^n2)),
+	     q : (q/(g1^n1 * g2^n2)),
+	    
+	      
+	     print("p = ",p, "   q = ",q),
+	     p : expand(subst(g1 = ker1,p)),
+	     p  : expand(subst(g2= ker2,p)),
+	     q : expand(subst(g1 = ker1,q)),
+	    q : expand(subst(g2 = ker2,q)),
+	     e : ratsubst(g1,ker1,e),
+	     
+	     p : demoivre(p),
+	     q : demoivre(q),
+	     ratsimp(p/q));
+
 
  |#
+
+(defun gather-exp-args (e)
+ "Return a Common Lisp list (not a Maxima list) of all exponents X such that
+   the expression E contains a subexpression of the form (mexpt %e X), when 
+   X isn't a sum, and when X is a sum return a list of the arguments of the sum.
+   Since exp(a+b) = exp(a) exp(b), the returned list is at least partially semantic.
+   The resulting list is unsorted and may contain duplicates."
+  (cond
+    (($mapatom e) nil)
+    ((and (mexptp e) (eq (second e) '$%e)) ; term has the form ((mexpt) %e X), return (list X)
+     (if (mplusp (third e))
+        (third e)
+        (list (third e)))) ;oh, the docstring needs to be updated 
+    (t (mapcan #'gather-exp-args (cdr e))))) ;map gather-exp-args over args and collect 
+
+(defmfun $faketrigrat (e)
+   (let* (($radsubstflag t) 
+          (e ($exponentialize e))
+          (lll (fapply '$set (gather-exp-args e)))
+          (ec ($equiv_classes lll #'(lambda (a b) ($ratnump (div a b)))))) ;the members of lll are not zero.
+    (setq ec (mapcar #'(lambda (s) ($apply '$ezgcd ($listify s))) (cdr ec)))
+    (fapply 'mlist ec)))
+
+   
+  
+
 
 (defun trig-count (e)
  "Return the number of trigonometric operators, including the hyperbolic operators, in the Maxima expression `e`."
