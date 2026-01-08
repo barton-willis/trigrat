@@ -112,55 +112,35 @@ sin((30*x+2*%pi)/5)+(%i*sin(%pi/5)+cos(%pi/5))*cos((30*x+2*%pi)/5)+(sin(%pi/5)-%
 ```
 The result is a quotient of Fourier sums, not a Fourier sum. 
 
-Both the current `trigrat` function and this rewrite, achieve the linearization by through rational simplification (`ratsimp`) with the option variable `algebraic` set to true. This works for some cases, but not all. I propose a replacing the method that depends on the specifics of how rational simplification works with a partial fraction-based method. I think this method will be more predicable and has a better chance of working for more cases.
+Both the current `trigrat` function and this rewrite, achieve the linearization by through rational simplification (`ratsimp`) with the option variable `algebraic` set to true. This works for some cases, but not all. 
 
-Here is a step-by-step partial fraction-based method that shows how such a method might work:
+Here is a step-by-step partial fraction-based method that shows how a corrected method might work. The hard part that I have not yet done is automatically finding the linear relations between the arguments of the trigonometric functions. Here I do an example by hand:
+
 ```maxima
 
-(%i1)	radsubstflag : true$
-
-(%i2)	xxx : sin(5*x)/sin(x + %pi/5);
-(xxx)	sin(5*x)/sin(x+%pi/5)
-
-(%i3)	xxx : exponentialize(xxx);
+(%i2)	xxx : exponentialize(xxx);
 (xxx)	(%e^(5*%i*x)-%e^(-(5*%i*x)))/(%e^(%i*(x+%pi/5))-%e^(-(%i*(x+%pi/5))))
 
-(%i4)	xxx : ratsubst(g,exp(%i*x),xxx);
-(xxx)	(%e^((%i*%pi)/5)*g^10-%e^((%i*%pi)/5))/(%e^((2*%i*%pi)/5)*g^6-g^4)
-
-(%i5)	xxx : partfrac(xxx,g);
-(xxx)	-(%e^((4*%i*%pi)/5)*g^4)-%e^((2*%i*%pi)/5)*g^2+%e^((3*%i*%pi)/5)/g^2+%e^((%i*%pi)/5)/g^4-1
-
-(%i6)	xxx : demoivre(xxx);
-(xxx)	-((%i*sin((4*%pi)/5)+cos((4*%pi)/5))*g^4)-(%i*sin((2*%pi)/5)+cos((2*%pi)/5))*g^2+(%i*sin((3*%pi)/5)+cos((3*%pi)/5))/g^2+(%i*sin(%pi/5)+cos(%pi/5))/g^4-
-
-(%i7)	xxx : subst(exp(%i*x), g,xxx);
-(xxx)	-((%i*sin((4*%pi)/5)+cos((4*%pi)/5))*%e^(4*%i*x))-(%i*sin((2*%pi)/5)+cos((2*%pi)/5))*%e^(2*%i*x)+(%i*sin((3*%pi)/5)+cos((3*%pi)/5))*%e^(-(2*%i*x))+(%i*sin(%pi/5)+cos(%pi/5))*%e^(-(4*%i*x))-
-
-(%i8)	xxx : demoivre(xxx);
-(xxx)	-((%i*sin((4*%pi)/5)+cos((4*%pi)/5))*(%i*sin(4*x)+cos(4*x)))+(%i*sin(%pi/5)+cos(%pi/5))*(cos(4*x)-%i*sin(4*x))-(%i*sin((2*%pi)/5)+cos((2*%pi)/5))*(%i*sin(2*x)+cos(2*x))+(%i*sin((3*%pi)/5)+cos((3*%pi)/5))*
-(cos(2*x)-%i*sin(2*x))-
-
-(%i9)	xxx : ratsimp(%);
-(xxx)	(sin((4*%pi)/5)-%i*cos((4*%pi)/5)+sin(%pi/5)-%i*cos(%pi/5))*sin(4*x)+(-(%i*sin((4*%pi)/5))-cos((4*%pi)/5)+%i*sin(%pi/5)+cos(%pi/5))*cos(4*x)+(sin((3*%pi)/5)-%i*cos((3*%pi)/5)+sin((2*%pi)/5)-%i*cos((2*%pi)/5))*sin(2*x)+
-(%i*sin((3*%pi)/5)+cos((3*%pi)/5)-%i*sin((2*%pi)/5)-cos((2*%pi)/5))*cos(2*x)-
-
-(%i10)	load(ntrig)$
-
-(%i11)	xxx : expand(xxx,0,0);
-(xxx)	(-(((sqrt(5)+1)*%i)/4)-((-sqrt(5)-1)*%i)/4+((sqrt(5)-1)*sqrt(sqrt(5)+5))/2^(3/2))*sin(4*x)+((sqrt(5)+1)/4-(-sqrt(5)-1)/4)*cos(4*x)+(-(((sqrt(5)-1)*%i)/4)-((1-sqrt(5))*%i)/4+sqrt(sqrt(5)+5)/sqrt(2))*sin(2*x)+((1-sqrt(5))/4-(sqrt(5)-1)/4)*cos(2*x)-
-
-(%i12)	ratsimp(%);
-(%o12)	(sqrt(sqrt(5)+5)*((sqrt(2)*sqrt(5)-sqrt(2))*sin(4*x)+2^(3/2)*sin(2*x))+(2*sqrt(5)+2)*cos(4*x)+(2-2*sqrt(5))*cos(2*x)-4)/4
+(%i3)	xxx : subst(g, exp(%i*(x + %pi/5)),xxx);
+(xxx)	(%e^(5*%i*x)-%e^(-(5*%i*x)))/(g-1/g)
 ```
+Now recognize that `exp(%i*5*x) = -g^5`:
+```maxima
+(%i4)	xxx : subst(-g^5,exp(%i*5*x),%);
+(xxx)	(1/g^5-g^5)/(g-1/g)
 
-When `ntrig` is unable to convert the exponentials to algebraic form, we have a bit of a problem. Without `ntrig`, we
-get
+(%i5)	partfrac(%,g);
+(%o5)	-g^4-g^2-1/g^2-1/g^4-1
+
+(%i6)	subst(g=exp(%i*(x+%pi/5)),%);
+(%o6)	-%e^(4*%i*(x+%pi/5))-%e^(2*%i*(x+%pi/5))-%e^(-(2*%i*(x+%pi/5)))-%e^(-(4*%i*(x+%pi/5)))-1
+
+(%i7)	demoivre(%);
+(%o7)	-(2*cos(4*(x+%pi/5)))-2*cos(2*(x+%pi/5))-1
+
+(%i8)	ratsimp(%);
+(%o8)	-(2*cos((20*x+4*%pi)/5))-2*cos((10*x+2*%pi)/5)-1
+
 
 ```maxima
-(%i90)	partfrac(%,g);
-(%o90)	-(%e^((4*%i*%pi)/5)*g^4)-%e^((2*%i*%pi)/5)*g^2+%e^((3*%i*%pi)/5)/g^2+%e^((%i*%pi)/5)/g^4-1
-```
-To get a value out of this that is explicitly real, we need to convert `-%e^((2*%i*%pi)/5` to `%e^(%i*%pi + (2*%i*%pi)/5`,
-and similarly for the other coefficients. Without doing this, we'll get a result that has an imaginary part
-that vanishes, but is not explicitly zero.  This bug is present in the current `trigrat`. 
+

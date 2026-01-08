@@ -147,6 +147,9 @@ trigrat((sin(5*x)+cos(4*x)+tan(3*x))/(sin(2*x)-cos(2*x)));
  trigrat(sin(3*x)/sin(x+%pi/3));
  sqrt(3) * sin(2 * x) + cos(2 * x) - 1$
 
+ trigrat(sin(4*x)/(sin(x+%pi/4)));
+ sqrt(2)*sin(3*x)+sqrt(2)*cos(3*x)+sqrt(2)*sin(x)-sqrt(2)*cos(x)$
+
 /* reported bugs: fixed and unfixed */
 
 /* 4554 trigrat often makes expressions unnecessarily complicated */
@@ -172,6 +175,66 @@ atan2(1,sin(k))$
 
  /* 2918 trigrat crashes sometimes because it pollutes ?varlist*/
 
+/* don't test result--only make sure it runs */
+ (exprsize(expr) := block([], slength(string(expr))),
+
+dssimp(expressionToSimplify, simplificationFunctionsToApply) := block
+(
+    [
+        exprSize,
+        smallestExpr,
+        smallestExprSize,
+        simpdExpr,
+        simpdExprSize
+    ],
+
+    exprSize : exprsize(expressionToSimplify),
+    smallestExpr : expressionToSimplify,
+    smallestExprSize : exprSize,
+
+    loop,
+    for sf in simplificationFunctionsToApply do
+    (
+        errcatch
+        (
+            simpdExpr : sf(expressionToSimplify),
+            simpdExprSize : exprsize(simpdExpr),
+            if simpdExprSize < smallestExprSize then
+            (
+                smallestExpr : simpdExpr,
+                smallestExprSize : simpdExprSize
+            )
+        )
+    ),
+
+    if smallestExprSize >= exprSize then
+    (
+        return(expressionToSimplify)
+    ),
+
+    expressionToSimplify : smallestExpr,
+    exprSize : smallestExprSize,
+    go(loop)
+),
+
+dssimpall(expressionToSimplify) := dssimp(expressionToSimplify,
+    [combine, distrib, expand, factor, factorsum, fullratsimp, logcontract,
+     multthru, radcan, rootscontract, trigrat, trigreduce, trigsimp, xthru]
+),
+
+expr : ((%pi*(log(x))*5*(x^2))/(sin((sqrt(x))))),
+
+d0 : dssimpall(expr),
+d1 : dssimpall(diff(d0, x)),
+d2 : dssimpall(diff(d1, x)),
+d3 : dssimpall(diff(d2, x)),
+
+remvalue(d0, d1, d2, d3,expr),
+kill(exprsize),
+kill(dssimp),
+kill(dssimpall),
+0);
+0$
  /* 2913 trigrat crashes with variable name "e" */
  trigrat(d^x * sin(x));
  d^x*sin(x)$
@@ -266,7 +329,8 @@ trigrat(sin(1));
 sin(1)$
 
 /* #41 trigrat () crashes on example in manual */
- trigrat(sin(3*a)/sin(a+%pi/3));
+trigrat(sin(3*a)/sin(a+%pi/3));
 sqrt(3)*sin(2*a)+cos(2*a)-1$
 
- 
+ contexts;
+ [initial, global]$
