@@ -205,8 +205,3 @@ gather_exp_args(e) := block([],
           (t (ftake (caar e) (mapcar #'(lambda (q) ($xtrigrat q canonical)) (cdr e))))))
             
 
-              
-
-
-
-   

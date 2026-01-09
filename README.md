@@ -76,23 +76,9 @@ But the function `xtrigrat` attempts to preserve the structure of the input as m
 (%o4)                            (x + 1)  + 1
 ```
 
-### To‑do
 
-  - Document how to load `trigrat` into Maxima.
-
-  - Write user documentation. 
-
-  - Fix the way `trigrat` behaves for expressions involving the trigonometric functions other than cosine and sine. 
     
-  - Write a regression test for `trigrat`. 
-
-  - Incorporate feedback from Maxima users and developers and improve the code and the algorithm.
-
-  - Decide if the function `xtrigrat` is worthy of developing (and possibly give it a new name).
-
-  - Both my code and the current code fail to linearize some quotients of trigonometric polynomials. This should be fixed. The last section gives a possible alternative algorithm.  
-    
-### Speculation on a partial fraction-based algorithm
+### Speculation on fixing some bugs
 
 The user documentation says:
 
@@ -112,9 +98,11 @@ sin((30*x+2*%pi)/5)+(%i*sin(%pi/5)+cos(%pi/5))*cos((30*x+2*%pi)/5)+(sin(%pi/5)-%
 ```
 The result is a quotient of Fourier sums, not a Fourier sum. 
 
+I think that this bug is due to the fact that the method misses the identity `5 (x + %pi/5)  = 5 x + %pi`. Noticing 
+this fact allows `sin(5*x)/sin(x+%pi/5)` to be expressed as a rational function of just `exp(%i*(x + %pi/5))`. 
 Both the current `trigrat` function and this rewrite, achieve the linearization by through rational simplification (`ratsimp`) with the option variable `algebraic` set to true. This works for some cases, but not all. 
 
-Here is a step-by-step partial fraction-based method that shows how a corrected method might work. The hard part that I have not yet done is automatically finding the linear relations between the arguments of the trigonometric functions. Here I do an example by hand:
+Here is a step-by-step method that shows how a corrected method might work. The hard part that I have not yet done is automatically finding the linear relations between the arguments of the trigonometric functions. Here I do an example by hand:
 
 ```maxima
 
@@ -140,7 +128,17 @@ Now recognize that `exp(%i*5*x) = -g^5`:
 
 (%i8)	ratsimp(%);
 (%o8)	-(2*cos((20*x+4*%pi)/5))-2*cos((10*x+2*%pi)/5)-1
-
-
 ```maxima
 
+
+### To‑do
+
+  - Document how to load `trigrat` into Maxima.
+
+  - Fix the way the code identifies kernels. 
+
+  - Write user documentation. 
+
+  - Decide if the function `xtrigrat` is worthy of developing (and possibly give it a new name).
+
+  
