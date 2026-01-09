@@ -10,91 +10,10 @@ The function trigrat attempts to simplify a rational expression in trig function
 (d) convert from exponential form to trigonometric form (demoivre)
 (e) rationally simplifies (ratsimp)
 
-A step-by-step example:
+|#
 
-(%i2) algebraic : true$
-
-(%i3) xxx : sin(3*a)/sin(a+%pi/3)$
-
-STEP 'a'
-
-(%i4) xxx : exponentialize(xxx);
-
-(%o4) (%e^(3*%i*a)-%e^-(3*%i*a))/(%e^(%i*a)*((sqrt(3)*%i)/2+1/2)
-                                 -%e^-(%i*a)*(1/2-(sqrt(3)*%i)/2))
-
-STEP 'b'
-
-(%i5) xxx : ratsimp(xxx);
-
-(%o5) -((%e^-(2*%i*a)*((sqrt(3)*%e^(4*%i*a)-sqrt(3))*%i
-                      -%e^(4*%i*a)+2*%e^(2*%i*a)-1))/2)
-
-STEP 'c'
-
-(%i6) xxx : expand(xxx);
-
-(%o6) -((sqrt(3)*%e^(2*%i*a)*%i)/2)+(sqrt(3)*%e^-(2*%i*a)*%i)/2+%e^(2*%i*a)/2
-                                   +%e^-(2*%i*a)/2-1
-
-STEP 'd'
-
-(%i7) xxx : demoivre(xxx);
-
-(%o7) -((sqrt(3)*%i*(%i*sin(2*a)+cos(2*a)))/2)
- +(%i*sin(2*a)+cos(2*a))/2+(sqrt(3)*%i*(cos(2*a)-%i*sin(2*a)))/2
- +(cos(2*a)-%i*sin(2*a))/2-1
-
- STEP 'e'
-
-(%i8) xxx : ratsimp(xxx);
-
-(%o8) sqrt(3)*sin(2*a)+cos(2*a)-1
-
-load("opsubst");
-gather_exp_args(e) := block([],
-  args : gatherargs(e,"^"),
-  args
-(%i445)	fake_trigrat(e,ker1,ker2) := block([g1 : gensym(), g2 : gensym(), p,q],
-	     e :  exponentialize(e),
-	     e : ratsubst(g1,ker1,e),
-	     e : ratsubst(g2,ker2,e),
-	     e : ratsimp(e,'%i),
-	    
-	     print("e = ",e),
-	     p : expand(num(e)),
-	     q : expand(denom(e)),
-	     
-	     print([p,q]),
-	     pdeg : hipow(p,g1),
-	     qdeg : hipow(q,g1),
-	     n1 : floor(max(pdeg, qdeg)/2),
-	    
-	     print("n1 = ",n1),
-	    
-	    
-	     pdeg : hipow(p,g2),
-	     qdeg : hipow(q,g2),
-	     n2 : floor(max(pdeg, qdeg)/2),
-	    
-	     print("n2 = ",n2),
-	     p : (p/(g1^n1 * g2^n2)),
-	     q : (q/(g1^n1 * g2^n2)),
-	    
-	      
-	     print("p = ",p, "   q = ",q),
-	     p : expand(subst(g1 = ker1,p)),
-	     p  : expand(subst(g2= ker2,p)),
-	     q : expand(subst(g1 = ker1,q)),
-	    q : expand(subst(g2 = ker2,q)),
-	     e : ratsubst(g1,ker1,e),
-	     
-	     p : demoivre(p),
-	     q : demoivre(q),
-	     ratsimp(p/q));
-
-
- |#
+ ;; D. Lazard wrote the initial version of `trigrat` in August 1988. Since then, the code has been modified and
+;; rewritten by many contributors. For the historical record since about 2000, consult the Git history.
 
 (defun gather-exp-args (e)
  "Return a Common Lisp list (not a Maxima list) of all exponents X such that
@@ -150,7 +69,6 @@ gather_exp_args(e) := block([],
                (if (or canonical (< (trig-count ans) (trig-count e)))
                    ans
                    e))))))))
-
    
 (defun trig-count (e)
  "Return the number of trigonometric operators, including the hyperbolic operators, in the Maxima expression `e`."
@@ -158,31 +76,6 @@ gather_exp_args(e) := block([],
          (t
            (reduce #'+ (mapcar #'trig-count (cdr e)) 
               :initial-value (if (and (consp e) (consp (car e)) (trigp (caar e))) 1 0)))))
-
-;; D. Lazard wrote the initial version of `trigrat` in August 1988. Since then, the code has been modified and
-;; rewritten by many contributors. For the historical record since about 2000, consult the Git history.
-(defmfun $trigrat_old (e &optional (canonical t))
- "Simplify a trigonometric expression `e` by exponential substitution, expansion, and 
-  rational simplification. This function does *not* return canonical representation--it 
-  is possible that trigrat will simplify equivalent expressions to syntactically distinct 
-  expressions. This code uses a metric based on number of trig operators to optionally return
-  the expression unchanged. "
-  (cond (($mapatom e) e)
-
-        ((or (mbagp e) ($setp e) (mrelationp e)) ;map trigrat over mbags, sets, and inequations.
-           (fapply (caar e) (mapcar #'(lambda (q) ($trigrat q canonical)) (cdr e))))
-
-        (t
-          (let* ((ans
-                  (sratsimp
-                     ($demoivre 
-                        ($expand 
-                           (let (($algebraic t)) (sratsimp ($exponentialize e))))))))
-             ;; conditionally return either e or ans
-             (if (or canonical (< (trig-count ans) (trig-count e)))
-               ans
-               e
-               )))))
 
 (defmfun $xtrigrat (e &optional (canonical t))
 "Similar to `trigrat`, but attempt to change the structure of the input as little as possible. "
